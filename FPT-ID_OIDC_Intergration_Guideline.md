@@ -10,16 +10,23 @@ Tài liệu này hướng dẫn user tích hợp nhanh OIDC với domain `https:
 
 ## 2. Sơ đồ luồng Authorize Code Flow
 
-```graph TD
-  A[User mở trang ứng dụng] --> B[Chuyển hướng đến /oauth2/auth]
-  B --> C[FPT ID hiển thị màn hình đăng nhập]
-  C --> D[User nhập thông tin đăng nhập]
-  D --> E[FPT ID xác thực thành công & trả mã code]
-  E --> F[Redirect về redirect_uri kèm ?code=...]
-  F --> G[Ứng dụng gửi mã code + verifier tới /oauth2/token]
-  G --> H[Nhận Access Token, ID Token]
-  H --> I[Gọi /userinfo lấy thông tin user]
-  I --> J[User đăng nhập vào hệ thống]
+```mermaid
+sequenceDiagram
+  participant User
+  participant Ứng dụng (Client)
+  participant FPT ID (Ory Hydra)
+  participant Resource API (tùy chọn)
+
+  User->>Ứng dụng (Client): Truy cập ứng dụng
+  Ứng dụng (Client)->>FPT ID (Ory Hydra): redirect /oauth2/auth (kèm PKCE nếu public client)
+  User->>FPT ID (Ory Hydra): Nhập thông tin tài khoản
+  FPT ID (Ory Hydra)-->>User: Xác thực thành công
+  FPT ID (Ory Hydra)->>Ứng dụng (Client): Redirect về `redirect_uri?code=...`
+  Ứng dụng (Client)->>FPT ID (Ory Hydra): Gửi POST /oauth2/token (kèm code + code_verifier)
+  FPT ID (Ory Hydra)-->>Ứng dụng (Client): Trả Access Token, ID Token
+  Ứng dụng (Client)->>FPT ID (Ory Hydra): GET /userinfo
+  FPT ID (Ory Hydra)-->>Ứng dụng (Client): Trả thông tin người dùng
+  Ứng dụng (Client)-->>User: Hoàn tất đăng nhập
 ```
 
 > 🔐 Nếu là **Public Client** → bắt buộc sử dụng `code_challenge` và `code_verifier` theo chuẩn **PKCE** để tăng cường bảo mật.
