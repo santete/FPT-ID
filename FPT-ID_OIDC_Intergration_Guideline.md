@@ -10,7 +10,7 @@ Tài liệu này hướng dẫn user tích hợp nhanh OIDC với domain `https:
 
 ## 2. Sơ đồ luồng Authorize Code Flow
 
-graph TD
+```graph TD
   A[User mở trang ứng dụng] --> B[Chuyển hướng đến /oauth2/auth]
   B --> C[FPT ID hiển thị màn hình đăng nhập]
   C --> D[User nhập thông tin đăng nhập]
@@ -20,6 +20,7 @@ graph TD
   G --> H[Nhận Access Token, ID Token]
   H --> I[Gọi /userinfo lấy thông tin user]
   I --> J[User đăng nhập vào hệ thống]
+```
 
 > 🔐 Nếu là **Public Client** → bắt buộc sử dụng `code_challenge` và `code_verifier` theo chuẩn **PKCE** để tăng cường bảo mật.
 
