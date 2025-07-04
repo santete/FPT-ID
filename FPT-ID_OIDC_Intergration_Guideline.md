@@ -37,6 +37,7 @@ sequenceDiagram
 
 ### ✅ Đăng ký client trên FPT ID Portal:
 - Truy cập: [https://accounts.fpt.vn](https://accounts.fpt.vn)
+- Staging: [https://accounts-stag.fpt.vn](https://accounts-stag.fpt.vn)
 - Cấp: `client_id`, `redirect_uri`
 - Tuỳ loại ứng dụng:
   - **Confidential Client (backend/web server)**: cần thêm `client_secret`
