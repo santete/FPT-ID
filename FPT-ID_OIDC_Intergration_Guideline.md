@@ -179,8 +179,8 @@ def auth_callback():
 
 ## 6. Liên hệ hỗ trợ
 
-* Kỹ thuật FPT ID: `fpt.id.support@fpt.com`
-* Slack/Teams: Ping @IAM Team hoặc @FPT ID Support
+* Kỹ thuật FPT-ID: `fpt.id.support@fpt.com`
+* Slack/Teams: Ping @IAM Team hoặc @FPT-ID-Support
 
 ---
 
