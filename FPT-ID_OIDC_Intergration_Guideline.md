@@ -12,13 +12,18 @@ Tài liệu này hướng dẫn user tích hợp nhanh OIDC với domain `https:
 
 ```mermaid
 graph TD
-  A[User mở trang ứng dụng] --> B[Ứng dụng chuyển hướng đến FPT ID (authorize)]
-  B -->|code + state| C[User đăng nhập thành công tại FPT ID]
-  C --> D[FPT ID redirect về redirect_uri của ứng dụng]
-  D -->|Gửi mã code + code_verifier| E[Ứng dụng gọi token endpoint]
-  E -->|Access Token + ID Token| F[Ứng dụng xác thực & lấy thông tin user từ /userinfo]
-  F --> G[User đăng nhập vào ứng dụng thành công]
+  A[User mở trang ứng dụng] --> B[Ứng dụng chuyển hướng đến FPT ID<br/>(/oauth2/auth)]
+  B --> C[FPT ID hiển thị màn hình đăng nhập]
+  C --> D[User nhập thông tin đăng nhập]
+  D --> E[FPT ID xác thực thành công & trả mã code]
+  E --> F[Redirect về redirect_uri kèm ?code=...]
+  F --> G[Ứng dụng gửi mã code + code_verifier tới /oauth2/token]
+  G --> H[FPT ID trả về Access Token, ID Token]
+  H --> I[Ứng dụng gọi /userinfo lấy thông tin người dùng]
+  I --> J[User đăng nhập thành công vào hệ thống]
 ```
+
+````
 
 > 🔐 Nếu là **Public Client** → bắt buộc sử dụng `code_challenge` và `code_verifier` theo chuẩn **PKCE** để tăng cường bảo mật.
 
@@ -27,39 +32,34 @@ graph TD
 ## 3. Cấu hình ứng dụng với FPT ID
 
 ### ✅ Đăng ký client trên FPT ID Portal:
-
-* Truy cập: [https://accounts.fpt.vn](https://accounts.fpt.vn)
-* Cấp: `client_id`, `redirect_uri`
-* Tuỳ loại ứng dụng:
-
-  * **Confidential Client (backend/web server)**: cần thêm `client_secret`
-  * **Public Client (SPA/mobile)**: **KHÔNG cần `client_secret`**, yêu cầu bật **PKCE**
+- Truy cập: [https://accounts.fpt.vn](https://accounts.fpt.vn)
+- Cấp: `client_id`, `redirect_uri`
+- Tuỳ loại ứng dụng:
+  - **Confidential Client (backend/web server)**: cần thêm `client_secret`
+  - **Public Client (SPA/mobile)**: **KHÔNG cần `client_secret`**, yêu cầu bật **PKCE**
 
 > 🔐 **Hướng dẫn bật PKCE cho public client:**
->
-> * Khi gọi `/oauth2/auth`, thêm tham số `code_challenge` và `code_challenge_method=S256`.
-> * Khi gọi `/oauth2/token`, truyền thêm `code_verifier`.
-> * Nhiều thư viện OIDC hiện đại (như `openid-client`, Authlib, AppAuth) sẽ tự xử lý PKCE nếu bạn bật cấu hình tương ứng.
+> - Khi gọi `/oauth2/auth`, thêm tham số `code_challenge` và `code_challenge_method=S256`.
+> - Khi gọi `/oauth2/token`, truyền thêm `code_verifier`.
+> - Nhiều thư viện OIDC hiện đại (như `openid-client`, Authlib, AppAuth) sẽ tự xử lý PKCE nếu bạn bật cấu hình tương ứng.
 
 ### ✉ Các URL endpoint chuẩn OIDC (dựa trên Ory Hydra):
-
-| Tên               | URL                                                        |
-| ----------------- | ---------------------------------------------------------- |
-| Discovery         | `https://accounts.fpt.vn/.well-known/openid-configuration` |
-| Authorize         | `https://accounts.fpt.vn/oauth2/auth`                      |
-| Token             | `https://accounts.fpt.vn/oauth2/token`                     |
-| User Info         | `https://accounts.fpt.vn/userinfo`                         |
-| Logout (tùy chọn) | `https://accounts.fpt.vn/oauth2/sessions/logout`           |
+| Tên | URL |
+|------|-----|
+| Discovery | `https://accounts.fpt.vn/.well-known/openid-configuration` |
+| Authorize | `https://accounts.fpt.vn/oauth2/auth` |
+| Token | `https://accounts.fpt.vn/oauth2/token` |
+| User Info | `https://accounts.fpt.vn/userinfo` |
+| Logout (tùy chọn) | `https://accounts.fpt.vn/oauth2/sessions/logout` |
 
 ---
 
 ## 4. Tích hợp nhanh theo ngôn ngữ
 
 ### 🚀 Node.js (sử dụng `openid-client`)
-
 ```bash
 npm install openid-client
-```
+````
 
 ```js
 const { Issuer, generators } = require('openid-client');
