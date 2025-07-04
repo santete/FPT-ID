@@ -8,7 +8,23 @@ Tài liệu này hướng dẫn user tích hợp nhanh OIDC với domain `https:
 
 ---
 
-## 2. Cấu hình ứng dụng với FPT ID
+## 2. Sơ đồ luồng Authorize Code Flow
+
+```mermaid
+graph TD
+  A[User mở trang ứng dụng] --> B[Ứng dụng chuyển hướng đến FPT ID (authorize)]
+  B -->|code + state| C[User đăng nhập thành công tại FPT ID]
+  C --> D[FPT ID redirect về redirect_uri của ứng dụng]
+  D -->|Gửi mã code + code_verifier| E[Ứng dụng gọi token endpoint]
+  E -->|Access Token + ID Token| F[Ứng dụng xác thực & lấy thông tin user từ /userinfo]
+  F --> G[User đăng nhập vào ứng dụng thành công]
+```
+
+> 🔐 Nếu là **Public Client** → bắt buộc sử dụng `code_challenge` và `code_verifier` theo chuẩn **PKCE** để tăng cường bảo mật.
+
+---
+
+## 3. Cấu hình ứng dụng với FPT ID
 
 ### ✅ Đăng ký client trên FPT ID Portal:
 
@@ -37,9 +53,9 @@ Tài liệu này hướng dẫn user tích hợp nhanh OIDC với domain `https:
 
 ---
 
-## 3. Tích hợp nhanh theo ngôn ngữ
+## 4. Tích hợp nhanh theo ngôn ngữ
 
-### Ề Node.js (sử dụng `openid-client`)
+### 🚀 Node.js (sử dụng `openid-client`)
 
 ```bash
 npm install openid-client
@@ -79,7 +95,7 @@ const { Issuer, generators } = require('openid-client');
 
 ---
 
-### Ề .NET Core (ASP.NET)
+### 🚀 .NET Core (ASP.NET)
 
 ```bash
 dotnet add package Microsoft.AspNetCore.Authentication.OpenIdConnect
@@ -96,7 +112,7 @@ builder.Services.AddAuthentication(options => {
 .AddOpenIdConnect("oidc", options => {
     options.Authority = "https://accounts.fpt.vn";
     options.ClientId = "<YOUR_CLIENT_ID>";
-    options.ClientSecret = "<YOUR_CLIENT_SECRET>"; // Confidential client
+    options.ClientSecret = "<YOUR_CLIENT_SECRET">; // Confidential client
     options.ResponseType = "code";
     options.Scope.Add("openid");
     options.Scope.Add("profile");
@@ -108,7 +124,7 @@ builder.Services.AddAuthentication(options => {
 
 ---
 
-### Ề Python (Flask - Authlib)
+### 🚀 Python (Flask - Authlib)
 
 ```bash
 pip install Authlib Flask
@@ -147,7 +163,7 @@ def auth_callback():
 
 ---
 
-## 4. Tips bảo mật khi tích hợp
+## 5. Tips bảo mật khi tích hợp
 
 * Luôn sử dụng HTTPS cho redirect\_uri
 * Kiểm tra `state`, `nonce` khi xác thực
@@ -157,14 +173,14 @@ def auth_callback():
 
 ---
 
-## 5. Liên hệ hỗ trợ
+## 6. Liên hệ hỗ trợ
 
 * Kỹ thuật FPT ID: `fpt.id.support@fpt.com`
 * Slack/Teams: Ping @IAM Team hoặc @FPT ID Support
 
 ---
 
-## 6. Kết luận
+## 7. Kết luận
 
 Việc tích hợp FPT ID theo OIDC (Ory Hydra) giúp ứng dụng tuân thủ chuẩn quốc tế và đồng bộ trong hệ sinh thái FPT. Việc sử dụng thư viện chuẩn giúp giảm thiểu sai sót và tối ưu thời gian tích hợp.
 
