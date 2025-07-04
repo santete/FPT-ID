@@ -22,8 +22,6 @@ Tài liệu này hướng dẫn user tích hợp nhanh OIDC với domain `https:
   I --> J[User đăng nhập thành công vào hệ thống]
 ```
 
-````
-
 > 🔐 Nếu là **Public Client** → bắt buộc sử dụng `code_challenge` và `code_verifier` theo chuẩn **PKCE** để tăng cường bảo mật.
 
 ---
