@@ -11,7 +11,6 @@ Tài liệu này hướng dẫn user tích hợp nhanh OIDC với domain `https:
 ## 2. Sơ đồ luồng Authorize Code Flow
 
 ```mermaid
-graph TD
   A[User mở trang ứng dụng] --> B[Ứng dụng chuyển hướng đến FPT ID<br/>(/oauth2/auth)]
   B --> C[FPT ID hiển thị màn hình đăng nhập]
   C --> D[User nhập thông tin đăng nhập]
